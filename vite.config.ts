@@ -12,7 +12,7 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      $lib: path.resolve("./src/lib"),
+      $lib: path.resolve(__dirname, "./src/lib"),
     },
   },
 });
