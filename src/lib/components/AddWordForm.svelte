@@ -2,6 +2,7 @@
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { MAX_WORD_LENGTH } from "$lib/constants";
+  import { declineWord } from "$lib/utils";
   import { createMutation } from "@tanstack/svelte-query";
   import { LoaderCircleIcon } from "lucide-svelte";
   import { assertWordExists } from "../../api/word";
@@ -9,7 +10,7 @@
     incrementWrongAttempts,
     resetWrongAttempts,
   } from "../../store/gameState";
-  import { addWord, resetWords } from "../../store/words";
+  import { addWord, resetWords, words } from "../../store/words";
 
   let canAddWords: boolean = $state(true);
   let input: HTMLInputElement | null = $state(null);
@@ -22,8 +23,9 @@
     inputError.isError = true;
     inputError.message = message;
     incrementWrongAttempts(() => {
+      const enteredWords = words.get().length;
+      inputError.message = `Game over. Your result is ${enteredWords} ${declineWord(enteredWords, ["word", "words"])}.`;
       resetWords();
-      inputError.message = "Game over :(";
     });
   }
 
