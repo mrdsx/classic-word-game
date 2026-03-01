@@ -6,7 +6,7 @@ export async function assertWordExists(word: string): Promise<unknown> {
     throw new Error("Word does not exist.");
   }
   if (response.status === 429) {
-    throw new Error("Too many requests");
+    throw new Error("Too many requests.");
   }
   if (!response.ok) {
     throw new Error("Failed to fetch word.");
