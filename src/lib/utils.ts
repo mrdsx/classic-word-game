@@ -41,7 +41,7 @@ export function isLowercaseOnly(str: string): boolean {
 export function validateWordResponse(data: unknown): void {
   const { data: words, success } = wordResponseSchema.safeParse(data);
   if (!success) {
-    throw new Error("Invalid response shape");
+    throw new Error("Invalid response shape.");
   }
 
   let isNoun = false;
@@ -54,7 +54,7 @@ export function validateWordResponse(data: unknown): void {
   });
 
   if (!isNoun) {
-    throw new Error("Word is not noun");
+    throw new Error("Word is not noun.");
   }
 }
 

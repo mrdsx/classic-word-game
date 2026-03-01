@@ -22,10 +22,10 @@ export async function addWord(
 
   // assert length
   if (newWord.length < MIN_WORD_LENGTH) {
-    throw new Error("Too short");
+    throw new Error("Too short.");
   }
   if (newWord.length > MAX_WORD_LENGTH) {
-    throw new Error("Too long");
+    throw new Error("Too long.");
   }
 
   // assert main rule of word game
@@ -34,16 +34,16 @@ export async function addWord(
   const newWordFirstChar = newWord[0];
 
   if (lastWordLastChar !== newWordFirstChar) {
-    throw new Error(`Word must start with "${lastWordLastChar}"`);
+    throw new Error(`Word must start with "${lastWordLastChar}".`);
   }
 
   // assert chars and uniqueness
   // non-alphabet symbols won't pass
   if (!isLowercaseOnly(newWord)) {
-    throw new Error("Only alphabet letters allowed");
+    throw new Error("Only alphabet letters allowed.");
   }
   if (words.get().includes(newWord)) {
-    throw new Error("Word already exists");
+    throw new Error("Word already exists.");
   }
 
   const wordResponse = await assertWordExists(newWord);
