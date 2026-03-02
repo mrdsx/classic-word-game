@@ -19,7 +19,9 @@
   {/if}
   <ul class="max-h-80 w-full space-y-2 overflow-auto">
     {#each $words as word (word)}
-      <li class="rounded-md bg-blue-100 px-2 py-1 break-all">
+      <li
+        class="dark:text-background rounded-md bg-blue-100 px-2 py-1 break-all dark:bg-blue-400/80"
+      >
         {word}
       </li>
     {/each}
