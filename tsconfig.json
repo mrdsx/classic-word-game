@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
+  "extends": ["@tsconfig/svelte/tsconfig.json", "./.router/tsconfig.json"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
@@ -9,7 +9,8 @@
   "compilerOptions": {
     "paths": {
       "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"]
+      "$lib/*": ["./src/lib/*"],
+      "sv-router/generated": ["./.router/generated"]
     }
   }
 }

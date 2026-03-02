@@ -6,7 +6,9 @@
   import WordsArea from "$lib/components/WordsArea.svelte";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import { gameState } from "./store/gameState";
+  import { Router } from "sv-router";
   import { theme } from "./store/theme";
+  import "sv-router/generated";
 
   const queryClient = new QueryClient();
 
@@ -25,14 +27,7 @@
       <ToggleThemeButton />
       <Button variant="outline">Log In</Button>
     </header>
-    <h1 class="pt-10 text-2xl font-semibold">Word Game</h1>
-    <div class="flex w-full max-w-100 flex-col items-center gap-4 px-5">
-      {#if $gameState.isPlaying}
-        <AddWordForm />
-        <WordsArea />
-      {:else}
-        <StartGameForm />
-      {/if}
-    </div>
+
+    <Router />
   </div>
 </QueryClientProvider>
