@@ -3,15 +3,14 @@
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" },
-    { "path": "./.router/tsconfig.json" }
+    { "path": "./tsconfig.node.json" }
   ],
 
   "compilerOptions": {
     "paths": {
       "$lib": ["./src/lib"],
       "$lib/*": ["./src/lib/*"],
-      "sv-router/generated": ["./.router/generated"]
+      "$router": ["./.router/generated"]
     }
   }
 }

@@ -1,12 +1,15 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
+  import { actionCodeSettings, auth } from "$lib/firebase";
   import { emailSchema } from "$lib/schemas";
+  import { sendSignInLinkToEmail } from "firebase/auth";
+  import { setUserEmail } from "../../store/authState";
 
   let email = $state("");
   let submitError: string | null = $state(null);
 
-  function handleSubmit(event: Event): void {
+  async function handleSubmit(event: Event): Promise<void> {
     submitError = null;
     event.preventDefault();
     const { success } = emailSchema.safeParse(email);
@@ -14,6 +17,9 @@
       submitError = "Invalid email.";
       return;
     }
+
+    setUserEmail(email);
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
   }
 </script>
 
