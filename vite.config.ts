@@ -14,7 +14,6 @@ export default defineConfig({
   resolve: {
     alias: {
       $lib: path.resolve(__dirname, "./src/lib"),
-      $router: path.resolve(__dirname, "./.router/router.ts"),
     },
   },
 });

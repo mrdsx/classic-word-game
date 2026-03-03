@@ -9,8 +9,7 @@
   "compilerOptions": {
     "paths": {
       "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"],
-      "$router": ["./.router/generated"]
+      "$lib/*": ["./src/lib/*"]
     }
   }
 }

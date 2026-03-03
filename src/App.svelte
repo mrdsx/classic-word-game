@@ -11,7 +11,7 @@
   } from "firebase/auth";
   import { Router } from "sv-router";
 
-  import { navigate } from "./router";
+  import { navigate } from "$lib/router";
   import { authState } from "./store/authState";
   import { theme } from "./store/theme";
   import { setUser, userState } from "./store/userState";

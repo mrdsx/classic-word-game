@@ -1,9 +1,19 @@
 <script lang="ts">
   import { gamePreferences } from "../../store/gamePreferences";
-  import { gameState } from "../../store/gameState";
+  import { finishWordGame, gameState } from "../../store/gameState";
   import { resetWords, words } from "../../store/words";
-  import FinishGameAlertDialog from "./FinishGameAlertDialog.svelte";
-  import { Button } from "./ui/button";
+  import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "./ui/alert-dialog";
+  import { Button, buttonVariants } from "./ui/button";
 </script>
 
 <div class="flex w-full flex-col items-center gap-2">
@@ -28,8 +38,25 @@
   </ul>
   <div class="space-x-1">
     {#if $words.length > 0}
-      <Button variant="outline" onclick={resetWords}>Reset</Button>
+      <AlertDialog>
+        <AlertDialogTrigger class={buttonVariants({ variant: "outline" })}>
+          Reset
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              All entered words will be deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction onclick={resetWords}>Yes</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     {/if}
-    <FinishGameAlertDialog />
+
+    <Button onclick={finishWordGame}>Finish</Button>
   </div>
 </div>

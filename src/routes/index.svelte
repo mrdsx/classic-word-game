@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { gameState } from "../store/gameState";
   import AddWordForm from "$lib/components/AddWordForm.svelte";
-  import WordsArea from "$lib/components/WordsArea.svelte";
   import StartGameForm from "$lib/components/StartGameForm.svelte";
+  import WordsArea from "$lib/components/WordsArea.svelte";
+  import { gameState } from "../store/gameState";
 </script>
 
 <h1 class="pt-10 text-2xl font-semibold">Word Game</h1>
