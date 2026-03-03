@@ -2,12 +2,20 @@
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { actionCodeSettings, auth } from "$lib/firebase";
+  import { navigate } from "$lib/router";
   import { emailSchema } from "$lib/schemas";
   import { sendSignInLinkToEmail } from "firebase/auth";
   import { setUserEmail } from "../../store/authState";
+  import { userState } from "../../store/userState";
 
   let email = $state("");
   let submitError: string | null = $state(null);
+
+  $effect(() => {
+    if ($userState.currentUser !== null) {
+      navigate("/");
+    }
+  });
 
   async function handleSubmit(event: Event): Promise<void> {
     submitError = null;
