@@ -3,6 +3,7 @@
   import { Toaster } from "$lib/components/ui/sonner";
   import UserArea from "$lib/components/UserArea.svelte";
   import { auth } from "$lib/firebase";
+  import { navigate } from "$lib/router";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import {
     isSignInWithEmailLink,
@@ -26,6 +27,12 @@
 
   onAuthStateChanged(auth, (user) => {
     setUser(user);
+
+    const searchParams = new URL(window.location.href).searchParams;
+    const mode = searchParams.get("mode");
+    if (mode === "signIn") {
+      navigate("/");
+    }
   });
 
   if (isSignInWithEmailLink(auth, window.location.href)) {

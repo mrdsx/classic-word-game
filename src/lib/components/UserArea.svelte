@@ -3,6 +3,7 @@
   import { navigate } from "$lib/router";
   import { signOut } from "firebase/auth";
   import { HouseIcon, LogOutIcon, UserIcon } from "lucide-svelte";
+  import { localWordGame } from "../../store/localWordGame";
   import { userState } from "../../store/userState";
   import { Button, buttonVariants } from "./ui/button";
   import {
@@ -16,6 +17,7 @@
   } from "./ui/dropdown-menu";
 
   async function handleLogout(): Promise<void> {
+    localWordGame.set({ ...localWordGame.get(), isPlaying: false });
     await signOut(auth);
     await navigate("/");
   }
@@ -39,7 +41,7 @@
           <HouseIcon />
           Home
         </DropdownMenuItem>
-        <DropdownMenuItem onclick={() => navigate("/profile")}>
+        <DropdownMenuItem onclick={() => navigate("/user/profile")}>
           <UserIcon />
           Profile
         </DropdownMenuItem>

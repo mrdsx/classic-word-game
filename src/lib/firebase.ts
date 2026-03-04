@@ -12,6 +12,11 @@ import {
   type ActionCodeSettings,
   type Auth,
 } from "firebase/auth";
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  type Firestore,
+} from "firebase/firestore";
 import { FRONTEND_URL } from "./constants";
 
 const firebaseConfig = {
@@ -33,8 +38,10 @@ export const auth: Auth = initializeAuth(firebase, {
   persistence: [indexedDBLocalPersistence, browserLocalPersistence],
   errorMap: debugErrorMap,
 });
+export const db: Firestore = getFirestore(firebase);
 
 if (import.meta.env.MODE === "development") {
-  console.log("Connecting to firebase emulators");
+  console.info("Connecting to firebase emulators");
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
+  connectFirestoreEmulator(db, "127.0.0.1", 8080);
 }

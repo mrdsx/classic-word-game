@@ -1,7 +1,7 @@
-import { API_URL } from "$lib/constants";
+import { DICTIONARY_API_URL } from "$lib/constants";
 
 export async function assertWordExists(word: string): Promise<unknown> {
-  const response = await fetch(`${API_URL}/${word}`);
+  const response = await fetch(`${DICTIONARY_API_URL}/${word}`);
   if (response.status === 404) {
     throw new Error("Word does not exist.");
   }

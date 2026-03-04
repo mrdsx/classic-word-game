@@ -1,7 +1,11 @@
 <script lang="ts">
-  import { gamePreferences } from "../../store/gamePreferences";
-  import { finishWordGame, gameState } from "../../store/gameState";
-  import { resetWords, words } from "../../store/words";
+  import {
+    localWordGame,
+    resetWordGame,
+    stopWordGame,
+  } from "../../store/localWordGame";
+  import { localWordGamePreferences } from "../../store/localWordGamePreferences";
+  import { words } from "../../store/words";
   import {
     AlertDialog,
     AlertDialogAction,
@@ -14,6 +18,8 @@
     AlertDialogTrigger,
   } from "./ui/alert-dialog";
   import { Button, buttonVariants } from "./ui/button";
+
+  const reversedWords = $derived([...$words].reverse());
 </script>
 
 <div class="flex w-full flex-col items-center gap-2">
@@ -23,12 +29,12 @@
         Words: {$words.length}
       </p>
       <p class="text-destructive">
-        Mistakes: {$gameState.wrongAttempts}/{$gamePreferences.currentMaxWrongAttempts}
+        Mistakes: {$localWordGame.mistakes}/{$localWordGamePreferences.currentMaxMistakes}
       </p>
     </div>
   {/if}
   <ul class="max-h-80 w-full space-y-2 overflow-auto">
-    {#each $words as word (word)}
+    {#each reversedWords as word (word)}
       <li
         class="dark:text-background rounded-md bg-blue-100 px-2 py-1 break-all dark:bg-blue-400/80"
       >
@@ -51,12 +57,12 @@
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onclick={resetWords}>Yes</AlertDialogAction>
+            <AlertDialogAction onclick={resetWordGame}>Yes</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     {/if}
 
-    <Button onclick={finishWordGame}>Finish</Button>
+    <Button onclick={stopWordGame}>Finish</Button>
   </div>
 </div>

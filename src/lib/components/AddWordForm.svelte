@@ -8,7 +8,7 @@
   import {
     incrementWrongAttempts,
     resetWrongAttempts,
-  } from "../../store/gameState";
+  } from "../../store/localWordGame";
   import { addWord, resetWords, words } from "../../store/words";
   import { LoadingSwap } from "./ui/loading-swap";
 
@@ -16,16 +16,7 @@
   let input: HTMLInputElement | null = $state(null);
   let inputError: string | null = $state(null);
 
-  function setErrorTrue(message: string): void {
-    inputError = message;
-    incrementWrongAttempts(() => {
-      const enteredWords = words.get().length;
-      inputError = `Game over. Your result is ${enteredWords} ${declineWord(enteredWords, ["word", "words"])}.`;
-      resetWords();
-    });
-  }
-
-  const word = createMutation(() => ({
+  const wordExists = createMutation(() => ({
     mutationFn: async (word: string) => {
       return await assertWordExists(word);
     },
@@ -40,17 +31,24 @@
 
     try {
       const newWord = input.value;
-      await addWord(newWord, word.mutateAsync);
+      await addWord(newWord, wordExists.mutateAsync);
       input.value = "";
       resetWrongAttempts();
     } catch (error) {
       if (error instanceof Error) {
-        setErrorTrue(error.message);
+        inputError = error.message;
+        incrementWrongAttempts(handleGameOver);
         return;
       }
 
       throw error;
     }
+  }
+
+  function handleGameOver(): void {
+    const enteredWords = words.get().length;
+    inputError = `Game over. Your result is ${enteredWords} ${declineWord(enteredWords, ["word", "words"])}.`;
+    resetWords();
   }
 </script>
 
@@ -67,7 +65,13 @@
       <p class="text-destructive text-sm">{inputError}</p>
     {/if}
   </div>
-  <Button class="w-25" type="submit" disabled={word.isPending || !canAddWords}>
-    <LoadingSwap isLoading={word.isPending} fallback="Adding">Add</LoadingSwap>
+  <Button
+    class="w-25"
+    type="submit"
+    disabled={wordExists.isPending || !canAddWords}
+  >
+    <LoadingSwap isLoading={wordExists.isPending} fallback="Adding">
+      Add
+    </LoadingSwap>
   </Button>
 </form>

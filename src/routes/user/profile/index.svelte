@@ -6,7 +6,7 @@
   import { createMutation } from "@tanstack/svelte-query";
   import { updateProfile, type User } from "firebase/auth";
   import { toast } from "svelte-sonner";
-  import { userState } from "../../store/userState";
+  import { userState } from "../../../store/userState";
 
   let nickname = $state("");
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { gamePreferences } from "../../store/gamePreferences";
+  import { localWordGamePreferences } from "../../store/localWordGamePreferences";
   import { NativeSelect, NativeSelectOption } from "./ui/native-select";
 </script>
 
-<NativeSelect bind:value={$gamePreferences.maxWrongAttempts}>
+<NativeSelect bind:value={$localWordGamePreferences.maxMistakes}>
   <NativeSelectOption value={1}>1</NativeSelectOption>
   <NativeSelectOption value={2}>2</NativeSelectOption>
   <NativeSelectOption value={3}>3</NativeSelectOption>

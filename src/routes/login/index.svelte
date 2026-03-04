@@ -27,7 +27,7 @@
     }
   });
 
-  async function handleSubmit(event: Event): Promise<void> {
+  function handleSubmit(event: Event): void {
     submitError = null;
     event.preventDefault();
     const { success } = emailSchema.safeParse(email);

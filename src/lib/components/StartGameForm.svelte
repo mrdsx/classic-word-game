@@ -1,4 +1,4 @@
-<script lang="ts" module>
+<script lang="ts">
   import {
     AlertDialog,
     AlertDialogAction,
@@ -11,16 +11,14 @@
     AlertDialogTrigger,
   } from "$lib/components/ui/alert-dialog";
   import { Label } from "$lib/components/ui/label";
-  import { startNewWordGame, startWordGame } from "../../store/gameState";
+  import { startNewWordGame, startWordGame } from "../../store/localWordGame";
   import { words } from "../../store/words";
   import MaxAttemptsNativeSelect from "./MaxAttemptsNativeSelect.svelte";
   import { Button, buttonVariants } from "./ui/button";
 
   const NEW_GAME_BUTTON_TEXT = "New game";
-</script>
 
-<script lang="ts">
-  let canContinueGame = $state(words.get().length > 0);
+  let canContinueGame = $derived($words.length > 0);
 
   function handleSubmit(): void {
     startNewWordGame();
@@ -36,7 +34,7 @@
   onsubmit={handleSubmit}
 >
   <div class="flex w-full justify-between space-y-2">
-    <Label>Max consecutive wrong attempts</Label>
+    <Label>Max consecutive mistakes</Label>
     <MaxAttemptsNativeSelect />
   </div>
   <div class="flex gap-2 *:w-25">

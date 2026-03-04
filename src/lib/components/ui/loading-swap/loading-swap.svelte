@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { LoaderCircleIcon } from "lucide-svelte";
   import type { Snippet } from "svelte";
+  import { Spinner } from "../spinner";
 
   type LoadingSwapProps = {
     isLoading: boolean;
@@ -12,7 +12,7 @@
 </script>
 
 {#if isLoading}
-  <LoaderCircleIcon class="animate-spin" /> {fallback}
+  <Spinner /> {fallback}
 {:else}
   {@render children()}
 {/if}
