@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import { MAX_WORD_LENGTH } from "$lib/constants";
+  import { MAX_WORD_LENGTH, MIN_WORD_LENGTH } from "$lib/constants";
   import { declineWord } from "$lib/utils";
   import { createMutation } from "@tanstack/svelte-query";
   import { assertWordExists } from "../../api/word";
@@ -56,6 +56,7 @@
   <div class="w-full space-y-0.5">
     <Input
       placeholder="Enter the word"
+      minlength={MIN_WORD_LENGTH}
       maxlength={MAX_WORD_LENGTH}
       aria-invalid={inputError !== null}
       disabled={!canAddWords}

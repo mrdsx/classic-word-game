@@ -28,8 +28,8 @@
   let maxMistakesSelectRef: HTMLSelectElement | null = $state(null);
   const userUID = $derived($userState.currentUser?.uid);
 
-  const wordGameExists = createQuery(() => ({
-    queryKey: ["singlePlayerWordGameExists"],
+  const wordGame = createQuery(() => ({
+    queryKey: ["singlePlayerWordGame"],
     queryFn: async () => {
       const userUID = userState.get().currentUser?.uid ?? "";
       const singlePlayerWordGameDoc = doc(db, "singlePlayerWordGames", userUID);
@@ -37,7 +37,7 @@
       const docSnapshot = (await getDoc(
         singlePlayerWordGameDoc,
       )) as DocumentSnapshot<SinglePlayerWordGame>;
-      return docSnapshot.exists();
+      return docSnapshot.data();
     },
     enabled: $userState.currentUser !== null,
   }));
@@ -63,18 +63,15 @@
   }));
 
   const maxMistakes = $derived(wordGamePreferences.data?.maxMistakes ?? 5);
-  const canContinueGame = $derived(wordGameExists.data !== undefined);
+  const canContinueGame = $derived(
+    wordGame.data !== undefined && wordGame.data.words.length > 0,
+  );
 
   $effect(() => {
     if (maxMistakesSelectRef !== null) {
       maxMistakesSelectRef.value = String(maxMistakes);
     }
   });
-
-  function handleSubmit(event: Event): void {
-    event.preventDefault();
-    console.log("hi");
-  }
 
   async function handleUpdateMaxMistakes(
     event: Event & {
@@ -111,10 +108,7 @@
   }
 </script>
 
-<form
-  class="card flex w-full flex-col items-center gap-4"
-  onsubmit={handleSubmit}
->
+<form class="card flex w-full flex-col items-center gap-4">
   <div class="flex w-full justify-between space-y-2">
     <Label>Max consecutive mistakes</Label>
     <NativeSelect
@@ -133,7 +127,7 @@
   <div class="flex gap-2 *:w-25">
     <Button
       variant="outline"
-      disabled={!canContinueGame || wordGameExists.isPending}
+      disabled={!canContinueGame || wordGame.isPending}
       onclick={() => navigate("/user/game")}
     >
       Continue
@@ -143,7 +137,7 @@
         <AlertDialogTrigger
           class={buttonVariants({ variant: "default" })}
           type="button"
-          disabled={!canContinueGame || wordGameExists.isPending}
+          disabled={!canContinueGame || wordGame.isPending}
         >
           {NEW_GAME_BUTTON_TEXT}
         </AlertDialogTrigger>
@@ -156,17 +150,14 @@
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onclick={handleStartNewGame}
-              >Yes</AlertDialogAction
-            >
+            <AlertDialogAction onclick={handleStartNewGame}>
+              Yes
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     {:else}
-      <Button
-        type="submit"
-        disabled={!canContinueGame || wordGameExists.isPending}
-      >
+      <Button disabled={wordGame.isPending} onclick={handleStartNewGame}>
         {NEW_GAME_BUTTON_TEXT}
       </Button>
     {/if}
