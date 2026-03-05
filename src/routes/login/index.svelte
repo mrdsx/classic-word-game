@@ -7,6 +7,7 @@
   import { emailSchema } from "$lib/schemas";
   import { createMutation } from "@tanstack/svelte-query";
   import { sendSignInLinkToEmail } from "firebase/auth";
+  import { toast } from "svelte-sonner";
   import { setUserEmail } from "../../store/authState";
   import { userState } from "../../store/userState";
 
@@ -18,6 +19,12 @@
     mutationFn: async () => {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       setUserEmail(email);
+    },
+    onSuccess: async () => {
+      await navigate("/login/verify");
+    },
+    onError: () => {
+      toast.error("Failed to login.");
     },
   }));
 
