@@ -3,16 +3,10 @@
   import { Toaster } from "$lib/components/ui/sonner";
   import UserArea from "$lib/components/UserArea.svelte";
   import { auth } from "$lib/firebase";
-  import { navigate } from "$lib/router";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
-  import {
-    isSignInWithEmailLink,
-    onAuthStateChanged,
-    signInWithEmailLink,
-  } from "firebase/auth";
+  import { onAuthStateChanged } from "firebase/auth";
   import { Router } from "sv-router";
   import { theme } from "./store/theme";
-  import { userAuth } from "./store/userAuth";
   import { setUser } from "./store/userState";
 
   const queryClient = new QueryClient();
@@ -27,20 +21,7 @@
 
   onAuthStateChanged(auth, (user) => {
     setUser(user);
-
-    const searchParams = new URL(window.location.href).searchParams;
-    const mode = searchParams.get("mode");
-    if (mode === "signIn") {
-      navigate("/");
-    }
   });
-
-  if (isSignInWithEmailLink(auth, window.location.href)) {
-    const email = userAuth.get().userEmail;
-    if (email !== null) {
-      await signInWithEmailLink(auth, email, window.location.href);
-    }
-  }
 </script>
 
 <QueryClientProvider client={queryClient}>

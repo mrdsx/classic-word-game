@@ -1,30 +1,28 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
+  import { Label } from "$lib/components/ui/label";
   import LoadingSwap from "$lib/components/ui/loading-swap/loading-swap.svelte";
-  import { actionCodeSettings, auth } from "$lib/firebase";
+  import { auth } from "$lib/firebase";
   import { navigate } from "$lib/router";
-  import { emailSchema } from "$lib/schemas";
+  import { emailSchema, loginPasswordSchema } from "$lib/schemas";
   import { createMutation } from "@tanstack/svelte-query";
-  import { sendSignInLinkToEmail } from "firebase/auth";
+  import { signInWithEmailAndPassword } from "firebase/auth";
   import { toast } from "svelte-sonner";
-  import { setUserEmail } from "../../store/userAuth";
   import { userState } from "../../store/userState";
 
   let email = $state("");
-  let submitError: string | null = $state(null);
+  let password = $state("");
+  let emailError: string | null = $state(null);
+  let passwordError: string | null = $state(null);
 
   const userLogin = createMutation(() => ({
     mutationKey: ["login"],
     mutationFn: async () => {
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      setUserEmail(email);
-    },
-    onSuccess: async () => {
-      await navigate("/login/verify");
+      await signInWithEmailAndPassword(auth, email, password);
     },
     onError: () => {
-      toast.error("Failed to login.");
+      toast.error("Wrong email or password.");
     },
   }));
 
@@ -35,31 +33,52 @@
   });
 
   function handleSubmit(event: Event): void {
-    submitError = null;
+    emailError = null;
+    passwordError = null;
     event.preventDefault();
-    const { success } = emailSchema.safeParse(email);
-    if (!success) {
-      submitError = "Invalid email.";
-      return;
+
+    const emailParse = emailSchema.safeParse(email);
+    const passwordParse = loginPasswordSchema.safeParse(password);
+    if (!emailParse.success) {
+      emailError = "Invalid email.";
+    }
+    if (!passwordParse.success) {
+      passwordError = "Invalid password.";
     }
 
-    userLogin.mutate();
+    if (emailError === null && passwordError === null) {
+      userLogin.mutate();
+    }
   }
 </script>
 
 <form
-  class="flex w-full max-w-90 flex-col items-center gap-2 pt-20"
+  class="flex w-full max-w-90 flex-col items-center gap-4 pt-20"
   onsubmit={handleSubmit}
 >
-  <h1 class="mb-4 text-lg font-semibold">Login to your account</h1>
+  <h1 class=" text-lg font-semibold">Login to your account</h1>
   <fieldset class="w-full space-y-1">
+    <Label class="mb-2" for="email">Email</Label>
     <Input
+      id="email"
       placeholder="Enter your email"
-      aria-invalid={submitError !== null}
+      aria-invalid={emailError !== null}
       bind:value={email}
     />
-    {#if submitError !== null}
-      <p class="text-destructive self-start text-sm">{submitError}</p>
+    {#if emailError !== null}
+      <p class="text-destructive text-sm">{emailError}</p>
+    {/if}
+  </fieldset>
+  <fieldset class="w-full space-y-1">
+    <Label class="mb-2" for="password">Password</Label>
+    <Input
+      id="email"
+      placeholder="Enter your password"
+      aria-invalid={passwordError !== null}
+      bind:value={password}
+    />
+    {#if passwordError !== null}
+      <p class="text-destructive text-sm">{passwordError}</p>
     {/if}
   </fieldset>
   <Button class="w-full" type="submit" disabled={userLogin.isPending}>

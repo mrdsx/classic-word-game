@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const emailSchema = z.email();
+export const loginPasswordSchema = z.string().min(1);
 
 export const wordResponseSchema = z.array(
   z.object({
