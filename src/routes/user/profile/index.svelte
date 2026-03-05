@@ -46,7 +46,7 @@
 <h1 class="mb-4 text-xl font-semibold">
   {$userState.currentUser?.displayName ?? "User"}'s profile settings
 </h1>
-<form class="w-full max-w-100 space-y-4" onsubmit={handleSubmit}>
+<form class="card w-full space-y-4" onsubmit={handleSubmit}>
   <fieldset class="space-y-1.5">
     <Label for="display-name">Nickname</Label>
     <Input

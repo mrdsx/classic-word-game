@@ -33,7 +33,10 @@
   });
 
   function handleSendEmailVerification(): void {
-    if (user === null) return;
+    if (user === null) {
+      navigate("/");
+      return;
+    }
     confirmationEmail.mutate(user);
   }
 </script>

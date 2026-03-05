@@ -31,7 +31,9 @@
       <UserArea />
     </header>
 
-    <Router />
+    <main class="flex w-full max-w-100 flex-col items-center gap-4 px-4">
+      <Router />
+    </main>
   </div>
   <Toaster richColors />
 </QueryClientProvider>

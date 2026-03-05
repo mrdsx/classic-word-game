@@ -59,7 +59,7 @@
 </script>
 
 <form
-  class="card mt-10 flex w-full max-w-90 flex-col items-center gap-4"
+  class="card mt-10 flex w-full flex-col items-center gap-4"
   onsubmit={handleSubmit}
 >
   <h1 class=" text-lg font-semibold">Create new account</h1>

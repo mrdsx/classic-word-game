@@ -53,10 +53,10 @@
 </script>
 
 <form
-  class="card mt-10 flex w-full max-w-90 flex-col items-center gap-4"
+  class="card mt-10 flex w-full flex-col items-center gap-4"
   onsubmit={handleSubmit}
 >
-  <h1 class=" text-lg font-semibold">Login to your account</h1>
+  <h1 class="text-lg font-semibold">Login to your account</h1>
   <fieldset class="w-full space-y-1">
     <Label class="mb-2" for="email">Email</Label>
     <Input
