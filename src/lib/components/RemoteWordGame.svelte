@@ -5,7 +5,7 @@
     SinglePlayerWordGame,
     SinglePlayerWordGamePreferences,
   } from "$lib/types";
-  import { createQuery } from "@tanstack/svelte-query";
+  import { createMutation, createQuery } from "@tanstack/svelte-query";
   import { doc, DocumentSnapshot, getDoc, setDoc } from "firebase/firestore";
   import { userState } from "../../store/userState";
   import {
@@ -21,6 +21,7 @@
   } from "./ui/alert-dialog";
   import { Button, buttonVariants } from "./ui/button";
   import { Label } from "./ui/label";
+  import { LoadingSwap } from "./ui/loading-swap";
   import { NativeSelect, NativeSelectOption } from "./ui/native-select";
 
   const NEW_GAME_BUTTON_TEXT = "New game";
@@ -62,6 +63,28 @@
     enabled: $userState.currentUser !== null,
   }));
 
+  const startNewGameMutation = createMutation(() => ({
+    mutationKey: ["startNewGame"],
+    mutationFn: async ({
+      maxMistakes,
+      userUID,
+    }: {
+      maxMistakes: number;
+      userUID: string;
+    }) => {
+      const newWordGame: SinglePlayerWordGame = {
+        maxMistakes,
+        mistakes: 0,
+        words: [],
+      };
+
+      await setDoc(doc(db, "singlePlayerWordGames", userUID), newWordGame, {
+        merge: true,
+      });
+      await navigate("/user/game");
+    },
+  }));
+
   const maxMistakes = $derived(wordGamePreferences.data?.maxMistakes ?? 5);
   const canContinueGame = $derived(
     wordGame.data !== undefined && wordGame.data.words.length > 0,
@@ -96,15 +119,7 @@
     const maxMistakes = Number(maxMistakesSelectRef.value);
     if (isNaN(maxMistakes)) return;
 
-    const newWordGame: SinglePlayerWordGame = {
-      maxMistakes,
-      mistakes: 0,
-      words: [],
-    };
-    await setDoc(doc(db, "singlePlayerWordGames", userUID), newWordGame, {
-      merge: true,
-    });
-    await navigate("/user/game");
+    startNewGameMutation.mutate({ maxMistakes, userUID });
   }
 </script>
 
@@ -150,15 +165,25 @@
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onclick={handleStartNewGame}>
-              Yes
+            <AlertDialogAction
+              disabled={startNewGameMutation.isPending}
+              onclick={handleStartNewGame}
+            >
+              <LoadingSwap isLoading={startNewGameMutation.isPending}>
+                Yes
+              </LoadingSwap>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     {:else}
-      <Button disabled={wordGame.isPending} onclick={handleStartNewGame}>
-        {NEW_GAME_BUTTON_TEXT}
+      <Button
+        disabled={wordGame.isPending || startNewGameMutation.isPending}
+        onclick={handleStartNewGame}
+      >
+        <LoadingSwap isLoading={startNewGameMutation.isPending}>
+          {NEW_GAME_BUTTON_TEXT}
+        </LoadingSwap>
       </Button>
     {/if}
   </div>
