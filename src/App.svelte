@@ -11,8 +11,8 @@
     signInWithEmailLink,
   } from "firebase/auth";
   import { Router } from "sv-router";
-  import { authState } from "./store/authState";
   import { theme } from "./store/theme";
+  import { userAuth } from "./store/userAuth";
   import { setUser } from "./store/userState";
 
   const queryClient = new QueryClient();
@@ -36,7 +36,7 @@
   });
 
   if (isSignInWithEmailLink(auth, window.location.href)) {
-    const email = authState.get().userEmail;
+    const email = userAuth.get().userEmail;
     if (email !== null) {
       await signInWithEmailLink(auth, email, window.location.href);
     }

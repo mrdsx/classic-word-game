@@ -23,6 +23,7 @@
   import { Label } from "./ui/label";
   import { LoadingSwap } from "./ui/loading-swap";
   import { NativeSelect, NativeSelectOption } from "./ui/native-select";
+  import { Skeleton } from "./ui/skeleton";
 
   const NEW_GAME_BUTTON_TEXT = "New game";
 
@@ -126,28 +127,38 @@
 <form class="card flex w-full flex-col items-center gap-4">
   <div class="flex w-full justify-between space-y-2">
     <Label>Max consecutive mistakes</Label>
-    <NativeSelect
-      value={maxMistakes}
-      disabled={wordGamePreferences.isPending}
-      onchange={handleUpdateMaxMistakes}
-      bind:ref={maxMistakesSelectRef}
-    >
-      <NativeSelectOption value="1">1</NativeSelectOption>
-      <NativeSelectOption value="2">2</NativeSelectOption>
-      <NativeSelectOption value="3">3</NativeSelectOption>
-      <NativeSelectOption value="4">4</NativeSelectOption>
-      <NativeSelectOption value="5">5</NativeSelectOption>
-    </NativeSelect>
+    {#if wordGamePreferences.isPending}
+      <Skeleton class="h-9 w-14.5" />
+    {:else}
+      <NativeSelect
+        value={maxMistakes}
+        disabled={wordGamePreferences.isPending}
+        onchange={handleUpdateMaxMistakes}
+        bind:ref={maxMistakesSelectRef}
+      >
+        <NativeSelectOption value="1">1</NativeSelectOption>
+        <NativeSelectOption value="2">2</NativeSelectOption>
+        <NativeSelectOption value="3">3</NativeSelectOption>
+        <NativeSelectOption value="4">4</NativeSelectOption>
+        <NativeSelectOption value="5">5</NativeSelectOption>
+      </NativeSelect>
+    {/if}
   </div>
   <div class="flex gap-2 *:w-25">
-    <Button
-      variant="outline"
-      disabled={!canContinueGame || wordGame.isPending}
-      onclick={() => navigate("/user/game")}
-    >
-      Continue
-    </Button>
-    {#if canContinueGame}
+    {#if wordGame.isPending}
+      <Skeleton class="h-9" />
+    {:else}
+      <Button
+        variant="outline"
+        disabled={!canContinueGame || wordGame.isPending}
+        onclick={() => navigate("/user/game")}
+      >
+        Continue
+      </Button>
+    {/if}
+    {#if wordGame.isPending}
+      <Skeleton class="h-9" />
+    {:else if canContinueGame}
       <AlertDialog>
         <AlertDialogTrigger
           class={buttonVariants({ variant: "default" })}

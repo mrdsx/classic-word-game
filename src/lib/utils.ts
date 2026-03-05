@@ -24,7 +24,7 @@ export function declineWord(number: number, words: string[]): string {
   return words[1];
 }
 
-export function delayedReturn<T>(result: T, time: number): Promise<T> {
+export function delayedReturn<T>(result: T, time?: number): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(result), time));
 }
 

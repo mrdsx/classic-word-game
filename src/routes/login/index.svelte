@@ -8,7 +8,7 @@
   import { createMutation } from "@tanstack/svelte-query";
   import { sendSignInLinkToEmail } from "firebase/auth";
   import { toast } from "svelte-sonner";
-  import { setUserEmail } from "../../store/authState";
+  import { setUserEmail } from "../../store/userAuth";
   import { userState } from "../../store/userState";
 
   let email = $state("");
