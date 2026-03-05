@@ -89,8 +89,11 @@
     unsubscribe = onSnapshot(
       doc(db, "singlePlayerWordGames", userUID),
       async (doc) => {
-        const wordGameData = doc.data() as SinglePlayerWordGame;
-        if (wordGameData.mistakes >= wordGameData.maxMistakes) {
+        const wordGameData = doc.data() as SinglePlayerWordGame | undefined;
+        if (
+          wordGameData !== undefined &&
+          wordGameData.mistakes >= wordGameData.maxMistakes
+        ) {
           await handleGameOver(wordGameData.words.length, userUID);
         } else {
           wordGame = wordGameData ?? null;

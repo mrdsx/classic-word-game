@@ -39,7 +39,7 @@
       const docSnapshot = (await getDoc(
         singlePlayerWordGameDoc,
       )) as DocumentSnapshot<SinglePlayerWordGame>;
-      return docSnapshot.data();
+      return docSnapshot.data() ?? null;
     },
     enabled: $userState.currentUser !== null,
   }));
@@ -88,7 +88,9 @@
 
   const maxMistakes = $derived(wordGamePreferences.data?.maxMistakes ?? 5);
   const canContinueGame = $derived(
-    wordGame.data !== undefined && wordGame.data.words.length > 0,
+    wordGame.data !== undefined &&
+      wordGame.data !== null &&
+      wordGame.data.words.length > 0,
   );
 
   $effect(() => {
