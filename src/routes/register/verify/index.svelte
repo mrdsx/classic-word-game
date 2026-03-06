@@ -1,20 +1,21 @@
 <script lang="ts">
+  import { authQueryKeys } from "$features/auth/queryKeys";
+  import { authState } from "$features/auth/stores/authState";
   import { Alert, AlertTitle } from "$lib/components/ui/alert";
   import { Button } from "$lib/components/ui/button";
-  import LoadingSwap from "$lib/components/ui/loading-swap/loading-swap.svelte";
+  import { LoadingSwap } from "$lib/components/ui/loading-swap";
   import { actionCodeSettings } from "$lib/firebase";
   import { navigate } from "$lib/router";
   import { createMutation } from "@tanstack/svelte-query";
   import { sendEmailVerification, type User } from "firebase/auth";
   import { CircleCheckIcon } from "lucide-svelte";
   import { toast } from "svelte-sonner";
-  import { userState } from "../../../store/userState";
 
   let isEmailSent = $state(false);
-  const user = $derived($userState.currentUser);
+  const user = $derived($authState.currentUser);
 
   const confirmationEmail = createMutation(() => ({
-    mutationKey: ["confirmationEmail"],
+    mutationKey: authQueryKeys.verifyEmail,
     mutationFn: async (user: User) => {
       await sendEmailVerification(user, actionCodeSettings);
     },
@@ -34,7 +35,7 @@
 
   function handleSendEmailVerification(): void {
     if (user === null) {
-      navigate("/");
+      toast.error("Not authenticated.");
       return;
     }
     confirmationEmail.mutate(user);
@@ -50,7 +51,7 @@
     </Alert>
   {:else}
     <Button
-      disabled={confirmationEmail.isPending}
+      disabled={$authState.currentUser === null || confirmationEmail.isPending}
       onclick={handleSendEmailVerification}
     >
       <LoadingSwap isLoading={confirmationEmail.isPending} fallback="Sending">

@@ -1,4 +1,16 @@
 <script lang="ts">
+  import { authState } from "$features/auth/stores/authState";
+  import { fetchDictionaryWord } from "$features/dictionary/api";
+  import { addWordUseCase } from "$features/dictionary/useCases";
+  import { validateDictionaryWord } from "$features/dictionary/utils";
+  import { wordGameQueryKeys } from "$features/single-player-word-game/queryKeys";
+  import type { SinglePlayerWordGame } from "$features/single-player-word-game/types";
+  import { WordsList } from "$features/word-game/components";
+  import {
+    MAX_WORD_LENGTH,
+    MIN_WORD_LENGTH,
+  } from "$features/word-game/constants";
+  import { normalizeWord, validateWord } from "$features/word-game/utils";
   import {
     AlertDialog,
     AlertDialogAction,
@@ -12,37 +24,27 @@
   } from "$lib/components/ui/alert-dialog";
   import { Button, buttonVariants } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import LoadingSwap from "$lib/components/ui/loading-swap/loading-swap.svelte";
+  import { LoadingSwap } from "$lib/components/ui/loading-swap";
   import { Spinner } from "$lib/components/ui/spinner";
-  import { MAX_WORD_LENGTH, MIN_WORD_LENGTH } from "$lib/constants";
   import { db } from "$lib/firebase";
   import { navigate } from "$lib/router";
-  import type { SinglePlayerWordGame } from "$lib/types";
-  import { declineWord, normalizeWord, validateWord } from "$lib/utils";
+  import { declineWord } from "$lib/utils";
   import { createMutation } from "@tanstack/svelte-query";
   import type { Unsubscribe } from "firebase/auth";
   import { doc, onSnapshot, setDoc } from "firebase/firestore";
   import { onDestroy } from "svelte";
-  import { assertWordExists } from "../../../api/word";
-  import { userState } from "../../../store/userState";
 
   let unsubscribe: Unsubscribe | null = $state(null);
   let wordGame: SinglePlayerWordGame | null | undefined = $state(undefined);
   let newWord: string = $state("");
   let submitError: string | null = $state(null);
 
-  const userUID = $derived($userState.currentUser?.uid);
+  const userUID = $derived($authState.currentUser?.uid);
   const words = $derived((wordGame ?? { words: [] }).words as string[]);
   const reversedWords = $derived([...words].reverse());
 
-  const wordExists = createMutation(() => ({
-    mutationFn: async (word: string) => {
-      return await assertWordExists(word);
-    },
-  }));
-
   const updateWordGame = createMutation(() => ({
-    mutationKey: ["updateWordGame"],
+    mutationKey: wordGameQueryKeys.updateWordGame,
     mutationFn: async ({
       newWord,
       userUID,
@@ -52,22 +54,28 @@
       userUID: string;
       wordGame: SinglePlayerWordGame;
     }) => {
-      const word = normalizeWord(newWord);
-      validateWord(word, wordGame.words);
-      await wordExists.mutateAsync(word);
-
-      const newWordGame: Partial<SinglePlayerWordGame> = {
-        mistakes: 0,
-        words: [...wordGame.words, word],
-      };
-      await setDoc(doc(db, "singlePlayerWordGames", userUID), newWordGame, {
-        merge: true,
+      await addWordUseCase({
+        newWord,
+        words: wordGame.words,
+        normalizeWord,
+        validateWord,
+        fetchDictionaryWord,
+        validateDictionaryWord,
+        addWord: async (newWord, prevWords) => {
+          const newWordGame: Partial<SinglePlayerWordGame> = {
+            mistakes: 0,
+            words: [...prevWords, newWord],
+          };
+          await setDoc(doc(db, "singlePlayerWordGames", userUID), newWordGame, {
+            merge: true,
+          });
+        },
       });
     },
   }));
 
   const incrementMistakes = createMutation(() => ({
-    mutationKey: ["incrementMistakes"],
+    mutationKey: wordGameQueryKeys.wordGameMistakes,
     mutationFn: async ({
       userUID,
       wordGame,
@@ -103,6 +111,10 @@
         wordGame = null;
       },
     );
+
+    return () => {
+      unsubscribe?.();
+    };
   });
 
   onDestroy(() => {
@@ -199,15 +211,7 @@
         Mistakes: {wordGame?.mistakes}/{wordGame?.maxMistakes}
       </p>
     </div>
-    <ul class="max-h-80 w-full space-y-2 overflow-auto">
-      {#each reversedWords as word (word)}
-        <li
-          class="dark:text-background rounded-md bg-blue-100 px-2 py-1 break-all dark:bg-blue-400/80"
-        >
-          {word}
-        </li>
-      {/each}
-    </ul>
+    <WordsList words={reversedWords} />
   {/if}
   <div class="space-x-1">
     {#if wordGame !== undefined && wordGame !== null && wordGame.words.length > 0}

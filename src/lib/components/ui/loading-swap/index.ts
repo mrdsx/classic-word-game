@@ -1,3 +1,1 @@
-import LoadingSwap from "./loading-swap.svelte";
-
-export { LoadingSwap };
+export { default as LoadingSwap } from "./loading-swap.svelte";

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { authState } from "$features/auth/stores/authState";
+  import { userQueryKeys } from "$features/user/queryKeys";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
@@ -6,12 +8,11 @@
   import { createMutation } from "@tanstack/svelte-query";
   import { updateProfile, type User } from "firebase/auth";
   import { toast } from "svelte-sonner";
-  import { userState } from "../../../store/userState";
 
   let nickname = $state("");
 
   const userProfile = createMutation(() => ({
-    mutationKey: ["userProfile"],
+    mutationKey: userQueryKeys.profile,
     mutationFn: async ({
       user,
       nickname,
@@ -31,12 +32,12 @@
   }));
 
   $effect(() => {
-    nickname = $userState.currentUser?.displayName ?? "";
+    nickname = $authState.currentUser?.displayName ?? "";
   });
 
   function handleSubmit(event: Event): void {
     event.preventDefault();
-    const user = userState.get().currentUser;
+    const user = authState.get().currentUser;
     if (user === null) return;
 
     userProfile.mutate({ user, nickname });
@@ -44,7 +45,7 @@
 </script>
 
 <h1 class="mb-4 text-xl font-semibold">
-  {$userState.currentUser?.displayName ?? "User"}'s profile settings
+  {$authState.currentUser?.displayName ?? "User"}'s profile settings
 </h1>
 <form class="card w-full space-y-4" onsubmit={handleSubmit}>
   <fieldset class="space-y-1.5">

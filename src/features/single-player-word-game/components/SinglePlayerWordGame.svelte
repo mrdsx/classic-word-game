@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { db } from "$lib/firebase";
-  import { navigate } from "$lib/router";
+  import { authState } from "$features/auth/stores/authState";
+  import { wordGameQueryKeys } from "$features/single-player-word-game/queryKeys";
   import type {
     SinglePlayerWordGame,
     SinglePlayerWordGamePreferences,
-  } from "$lib/types";
+  } from "$features/single-player-word-game/types";
+  import { db } from "$lib/firebase";
+  import { navigate } from "$lib/router";
   import { createMutation, createQuery } from "@tanstack/svelte-query";
   import { doc, DocumentSnapshot, getDoc, setDoc } from "firebase/firestore";
-  import { userState } from "../../store/userState";
   import {
     AlertDialog,
     AlertDialogAction,
@@ -18,22 +19,25 @@
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "./ui/alert-dialog";
-  import { Button, buttonVariants } from "./ui/button";
-  import { Label } from "./ui/label";
-  import { LoadingSwap } from "./ui/loading-swap";
-  import { NativeSelect, NativeSelectOption } from "./ui/native-select";
-  import { Skeleton } from "./ui/skeleton";
+  } from "../../../lib/components/ui/alert-dialog";
+  import { Button, buttonVariants } from "../../../lib/components/ui/button";
+  import { Label } from "../../../lib/components/ui/label";
+  import { LoadingSwap } from "../../../lib/components/ui/loading-swap";
+  import {
+    NativeSelect,
+    NativeSelectOption,
+  } from "../../../lib/components/ui/native-select";
+  import { Skeleton } from "../../../lib/components/ui/skeleton";
 
   const NEW_GAME_BUTTON_TEXT = "New game";
 
   let maxMistakesSelectRef: HTMLSelectElement | null = $state(null);
-  const userUID = $derived($userState.currentUser?.uid);
+  const userUID = $derived($authState.currentUser?.uid);
 
   const wordGame = createQuery(() => ({
-    queryKey: ["singlePlayerWordGame"],
+    queryKey: wordGameQueryKeys.singlePlayer,
     queryFn: async () => {
-      const userUID = userState.get().currentUser?.uid ?? "";
+      const userUID = authState.get().currentUser?.uid ?? "";
       const singlePlayerWordGameDoc = doc(db, "singlePlayerWordGames", userUID);
 
       const docSnapshot = (await getDoc(
@@ -41,13 +45,13 @@
       )) as DocumentSnapshot<SinglePlayerWordGame>;
       return docSnapshot.data() ?? null;
     },
-    enabled: $userState.currentUser !== null,
+    enabled: $authState.currentUser !== null,
   }));
 
   const wordGamePreferences = createQuery(() => ({
-    queryKey: ["singlePlayerWordGamePreferences"],
+    queryKey: wordGameQueryKeys.preferences,
     queryFn: async () => {
-      const userUID = userState.get().currentUser?.uid ?? "";
+      const userUID = authState.get().currentUser?.uid ?? "";
       const singlePlayerWordGamePreferencesDoc = doc(
         db,
         "singlePlayerWordGamePreferences",
@@ -61,11 +65,11 @@
         ? (docSnapshot.data() as SinglePlayerWordGamePreferences)
         : null;
     },
-    enabled: $userState.currentUser !== null,
+    enabled: $authState.currentUser !== null,
   }));
 
   const startNewGameMutation = createMutation(() => ({
-    mutationKey: ["startNewGame"],
+    mutationKey: wordGameQueryKeys.startWordGame,
     mutationFn: async ({
       maxMistakes,
       userUID,

@@ -1,24 +1,27 @@
-import { normalizeWord, validateWord, validateWordResponse } from "$lib/utils";
+import { fetchDictionaryWord } from "$features/dictionary/api";
+import { addWordUseCase } from "$features/dictionary/useCases";
+import { validateDictionaryWord } from "$features/dictionary/utils";
+import type { Word } from "$features/word-game/types";
+import { normalizeWord, validateWord } from "$features/word-game/utils";
 import { persistentAtom } from "@nanostores/persistent";
 
-type WordsState = string[];
-
-export const words = persistentAtom<WordsState>("words", [], {
+export const words = persistentAtom<Word[]>("words", [], {
   encode: JSON.stringify,
   decode: JSON.parse,
 });
 
-export async function addWord(
-  newWord: string,
-  assertWordExists: (word: string) => unknown,
-): Promise<void> {
-  newWord = normalizeWord(newWord);
-  validateWord(newWord, words.get());
-
-  const wordResponse = await assertWordExists(newWord);
-  validateWordResponse(wordResponse);
-
-  words.set([...words.get(), newWord]);
+export async function addWord(newWord: Word): Promise<void> {
+  await addWordUseCase({
+    newWord,
+    words: words.get(),
+    normalizeWord,
+    validateWord,
+    fetchDictionaryWord,
+    validateDictionaryWord,
+    addWord: (newWord, prevWords) => {
+      words.set([...prevWords, newWord]);
+    },
+  });
 }
 
 export function resetWords(): void {

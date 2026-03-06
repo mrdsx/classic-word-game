@@ -9,7 +9,8 @@
   "compilerOptions": {
     "paths": {
       "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"]
+      "$lib/*": ["./src/lib/*"],
+      "$features/*": ["./src/features/*"]
     }
   }
 }

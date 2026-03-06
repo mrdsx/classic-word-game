@@ -1,5 +1,5 @@
 import { persistentAtom } from "@nanostores/persistent";
 
-type ThemeState = "light" | "dark";
+type Theme = "light" | "dark";
 
-export const theme = persistentAtom<ThemeState>("siteTheme", "light");
+export const theme = persistentAtom<Theme>("siteTheme", "light");

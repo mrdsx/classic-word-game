@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { MaxMistakesNativeSelect } from "$features/local-word-game/components";
   import {
     AlertDialog,
     AlertDialogAction,
@@ -10,11 +11,13 @@
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "$lib/components/ui/alert-dialog";
+  import { Button, buttonVariants } from "$lib/components/ui/button";
   import { Label } from "$lib/components/ui/label";
-  import { startNewWordGame, startWordGame } from "../../store/localWordGame";
-  import { words } from "../../store/words";
-  import MaxAttemptsNativeSelect from "./MaxAttemptsNativeSelect.svelte";
-  import { Button, buttonVariants } from "./ui/button";
+  import {
+    startNewWordGame,
+    startWordGame,
+  } from "../../../store/localWordGame";
+  import { words } from "../../../store/words";
 
   const NEW_GAME_BUTTON_TEXT = "New game";
 
@@ -35,7 +38,7 @@
 >
   <div class="flex w-full justify-between space-y-2">
     <Label>Max consecutive mistakes</Label>
-    <MaxAttemptsNativeSelect />
+    <MaxMistakesNativeSelect />
   </div>
   <div class="flex gap-2 *:w-25">
     <Button

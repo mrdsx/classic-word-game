@@ -1,11 +1,10 @@
 <script lang="ts">
+  import { authState } from "$features/auth/stores/authState";
   import { auth } from "$lib/firebase";
   import { navigate } from "$lib/router";
   import { signOut } from "firebase/auth";
   import { HouseIcon, LogOutIcon, UserIcon } from "lucide-svelte";
-  import { localWordGame } from "../../store/localWordGame";
-  import { userState } from "../../store/userState";
-  import { Button, buttonVariants } from "./ui/button";
+  import { Button, buttonVariants } from "../../../lib/components/ui/button";
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,7 +13,8 @@
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-  } from "./ui/dropdown-menu";
+  } from "../../../lib/components/ui/dropdown-menu";
+  import { localWordGame } from "../../../store/localWordGame";
 
   async function handleLogout(): Promise<void> {
     localWordGame.set({ ...localWordGame.get(), isPlaying: false });
@@ -23,7 +23,7 @@
   }
 </script>
 
-{#if $userState.currentUser === null}
+{#if $authState.currentUser === null}
   <Button variant="outline" href="/login">Log In</Button>
 {:else}
   <DropdownMenu>

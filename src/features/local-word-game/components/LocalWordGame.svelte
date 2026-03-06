@@ -1,8 +1,8 @@
 <script>
-  import { localWordGame } from "../../store/localWordGame";
+  import { WordsArea } from "$features/local-word-game/components";
+  import { localWordGame } from "../../../store/localWordGame";
   import AddWordForm from "./AddWordForm.svelte";
   import StartGameForm from "./StartGameForm.svelte";
-  import WordsArea from "./WordsArea.svelte";
 </script>
 
 {#if $localWordGame.isPlaying}

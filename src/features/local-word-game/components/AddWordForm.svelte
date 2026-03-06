@@ -1,43 +1,46 @@
 <script lang="ts">
+  import { localWordGameQueryKeys } from "$features/local-word-game/queryKeys";
+  import {
+    MAX_WORD_LENGTH,
+    MIN_WORD_LENGTH,
+  } from "$features/word-game/constants";
+  import type { Word } from "$features/word-game/types";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import { MAX_WORD_LENGTH, MIN_WORD_LENGTH } from "$lib/constants";
+  import { LoadingSwap } from "$lib/components/ui/loading-swap";
   import { declineWord } from "$lib/utils";
   import { createMutation } from "@tanstack/svelte-query";
-  import { assertWordExists } from "../../api/word";
   import {
-    incrementWrongAttempts,
-    resetWrongAttempts,
-  } from "../../store/localWordGame";
-  import { addWord, resetWords, words } from "../../store/words";
-  import { LoadingSwap } from "./ui/loading-swap";
+    incrementMistakes,
+    resetMistakes,
+  } from "../../../store/localWordGame";
+  import { addWord, resetWords, words } from "../../../store/words";
 
   let canAddWords: boolean = $state(true);
   let input: HTMLInputElement | null = $state(null);
   let inputError: string | null = $state(null);
 
-  const wordExists = createMutation(() => ({
-    mutationFn: async (word: string) => {
-      return await assertWordExists(word);
-    },
-    onMutate: () => {
-      inputError = null;
+  const addWordMutation = createMutation(() => ({
+    mutationKey: localWordGameQueryKeys.addWord,
+    mutationFn: async (word: Word) => {
+      return await addWord(word);
     },
   }));
 
   async function handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
+    inputError = null;
     if (input === null || !canAddWords) return;
 
     try {
       const newWord = input.value;
-      await addWord(newWord, wordExists.mutateAsync);
+      await addWordMutation.mutateAsync(newWord);
       input.value = "";
-      resetWrongAttempts();
+      resetMistakes();
     } catch (error) {
       if (error instanceof Error) {
         inputError = error.message;
-        incrementWrongAttempts(handleGameOver);
+        incrementMistakes(handleGameOver);
         return;
       }
 
@@ -69,9 +72,9 @@
   <Button
     class="w-25"
     type="submit"
-    disabled={wordExists.isPending || !canAddWords}
+    disabled={addWordMutation.isPending || !canAddWords}
   >
-    <LoadingSwap isLoading={wordExists.isPending} fallback="Adding">
+    <LoadingSwap isLoading={addWordMutation.isPending} fallback="Adding">
       Add
     </LoadingSwap>
   </Button>

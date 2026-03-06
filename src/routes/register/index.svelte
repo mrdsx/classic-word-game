@@ -1,12 +1,18 @@
 <script lang="ts">
+  import {
+    AuthForm,
+    AuthFormAction,
+    AuthFormFieldset,
+    AuthFormFooter,
+    AuthFormTitle,
+  } from "$features/auth/components";
+  import { authQueryKeys } from "$features/auth/queryKeys";
+  import { emailSchema, registerPasswordSchema } from "$features/auth/schemas";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
-  import LoadingSwap from "$lib/components/ui/loading-swap/loading-swap.svelte";
-  import { auth } from "$lib/firebase";
+  import { auth, mapFirebaseErrorCode } from "$lib/firebase";
   import { navigate } from "$lib/router";
-  import { emailSchema, signUpPasswordSchema } from "$lib/schemas";
-  import { mapFirebaseErrorCode } from "$lib/utils";
   import { createMutation } from "@tanstack/svelte-query";
   import {
     createUserWithEmailAndPassword,
@@ -19,15 +25,10 @@
   let emailError: string | null = $state(null);
   let passwordError: string | null = $state(null);
 
-  const userSignUp = createMutation(() => ({
-    mutationKey: ["signup"],
+  const userRegister = createMutation(() => ({
+    mutationKey: authQueryKeys.register,
     mutationFn: async () => {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      return userCredential;
+      return await createUserWithEmailAndPassword(auth, email, password);
     },
     onSuccess: () => {
       navigate("/register/verify");
@@ -39,12 +40,12 @@
   }));
 
   function handleSubmit(event: Event): void {
+    event.preventDefault();
     emailError = null;
     passwordError = null;
-    event.preventDefault();
 
     const emailParse = emailSchema.safeParse(email);
-    const passwordParse = signUpPasswordSchema.safeParse(password);
+    const passwordParse = registerPasswordSchema.safeParse(password);
     if (!emailParse.success) {
       emailError = "Invalid email.";
     }
@@ -53,14 +54,14 @@
     }
 
     if (emailError === null && passwordError === null) {
-      userSignUp.mutate();
+      userRegister.mutate();
     }
   }
 </script>
 
-<form class="card auth-form" onsubmit={handleSubmit}>
-  <h1 class="text-lg font-semibold">Create new account</h1>
-  <fieldset class="form-fieldset">
+<AuthForm onsubmit={handleSubmit}>
+  <AuthFormTitle>Create new account</AuthFormTitle>
+  <AuthFormFieldset>
     <Label for="email">Email</Label>
     <Input
       id="email"
@@ -71,8 +72,8 @@
     {#if emailError !== null}
       <p class="text-destructive text-sm">{emailError}</p>
     {/if}
-  </fieldset>
-  <fieldset class="form-fieldset">
+  </AuthFormFieldset>
+  <AuthFormFieldset>
     <Label for="password">Password</Label>
     <Input
       id="password"
@@ -84,16 +85,11 @@
     {#if passwordError !== null}
       <p class="text-destructive text-sm">{passwordError}</p>
     {/if}
-  </fieldset>
-  <Button class="w-full" type="submit" disabled={userSignUp.isPending}>
-    <LoadingSwap isLoading={userSignUp.isPending}>Sign Up</LoadingSwap>
-  </Button>
-</form>
-
-<style>
-  @import "tailwindcss";
-
-  .form-fieldset {
-    @apply w-full space-y-1;
-  }
-</style>
+  </AuthFormFieldset>
+  <AuthFormAction isLoading={userRegister.isPending}>Sign Up</AuthFormAction>
+  <AuthFormFooter>
+    Already have an account? Log in <Button href="/login" variant="link">
+      here
+    </Button>.
+  </AuthFormFooter>
+</AuthForm>

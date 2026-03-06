@@ -1,13 +1,13 @@
 <script lang="ts" module>
+  import { AuthArea } from "$features/auth/components";
+  import { setUser } from "$features/auth/stores/authState";
   import ToggleThemeButton from "$lib/components/ToggleThemeButton.svelte";
   import { Toaster } from "$lib/components/ui/sonner";
-  import UserArea from "$lib/components/UserArea.svelte";
   import { auth } from "$lib/firebase";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import { onAuthStateChanged } from "firebase/auth";
   import { Router } from "sv-router";
   import { theme } from "./store/theme";
-  import { setUser } from "./store/userState";
 
   const queryClient = new QueryClient();
 
@@ -28,7 +28,7 @@
   <div class="flex flex-col items-center gap-4">
     <header class="flex w-full justify-end space-x-2 p-3">
       <ToggleThemeButton />
-      <UserArea />
+      <AuthArea />
     </header>
 
     <main class="flex w-full max-w-100 flex-col items-center gap-4 px-4">

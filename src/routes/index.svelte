@@ -1,14 +1,14 @@
 <script lang="ts">
-  import LocalWordGame from "$lib/components/LocalWordGame.svelte";
-  import SinglePlayerWordGame from "$lib/components/SinglePlayerWordGame.svelte";
-  import { userState } from "../store/userState";
+  import { authState } from "$features/auth/stores/authState";
+  import { LocalWordGame } from "$features/local-word-game/components";
+  import { SinglePlayerWordGame } from "$features/single-player-word-game/components";
 </script>
 
 <h1 class="mt-10 text-2xl font-semibold">Word Game</h1>
 <div
   class="bg-white-100 flex w-full max-w-100 flex-col items-center gap-4 px-5"
 >
-  {#if $userState.currentUser === null}
+  {#if $authState.currentUser === null}
     <LocalWordGame />
   {:else}
     <SinglePlayerWordGame />

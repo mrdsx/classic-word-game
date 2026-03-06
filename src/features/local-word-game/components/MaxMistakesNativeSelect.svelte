@@ -1,6 +1,9 @@
 <script lang="ts">
-  import { localWordGamePreferences } from "../../store/localWordGamePreferences";
-  import { NativeSelect, NativeSelectOption } from "./ui/native-select";
+  import {
+    NativeSelect,
+    NativeSelectOption,
+  } from "$lib/components/ui/native-select";
+  import { localWordGamePreferences } from "../../../store/localWordGamePreferences";
 </script>
 
 <NativeSelect bind:value={$localWordGamePreferences.maxMistakes}>

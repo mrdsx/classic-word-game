@@ -5,12 +5,12 @@ import {
 } from "./localWordGamePreferences";
 import { resetWords } from "./words";
 
-type LocalWordGameState = {
+type LocalWordGame = {
   isPlaying: boolean;
   mistakes: number;
 };
 
-export const localWordGame = persistentAtom<LocalWordGameState>(
+export const localWordGame = persistentAtom<LocalWordGame>(
   "gameState",
   {
     isPlaying: false,
@@ -42,7 +42,7 @@ export function resetWordGame(): void {
   localWordGame.set({ ...localWordGame.get(), mistakes: 0 });
 }
 
-export function incrementWrongAttempts(onGameOver?: () => void): void {
+export function incrementMistakes(onGameOver?: () => void): void {
   const mistakes = localWordGame.get().mistakes + 1;
   const currentMaxMistakes = localWordGamePreferences.get().currentMaxMistakes;
 
@@ -58,6 +58,6 @@ export function incrementWrongAttempts(onGameOver?: () => void): void {
   });
 }
 
-export function resetWrongAttempts(): void {
+export function resetMistakes(): void {
   localWordGame.set({ ...localWordGame.get(), mistakes: 0 });
 }

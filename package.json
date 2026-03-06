@@ -23,6 +23,7 @@
     "bits-ui": "^2.16.3",
     "clsx": "^2.1.1",
     "firebase": "^12.10.0",
+    "http-status-codes": "^2.3.0",
     "lucide-svelte": "^0.575.0",
     "nanostores": "^1.1.1",
     "sv-router": "^0.14.0",
