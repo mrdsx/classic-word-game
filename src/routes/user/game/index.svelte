@@ -34,6 +34,8 @@
   import { doc, onSnapshot, setDoc } from "firebase/firestore";
   import { onDestroy } from "svelte";
 
+  // TODO: refactor
+
   let unsubscribe: Unsubscribe | null = $state(null);
   let wordGame: SinglePlayerWordGame | null | undefined = $state(undefined);
   let newWord: string = $state("");

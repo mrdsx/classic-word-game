@@ -7,6 +7,7 @@
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import { onAuthStateChanged } from "firebase/auth";
   import { Router } from "sv-router";
+  import { stopWordGame } from "./store/localWordGame";
   import { theme } from "./store/theme";
 
   const queryClient = new QueryClient();
@@ -20,6 +21,9 @@
   });
 
   onAuthStateChanged(auth, (user) => {
+    if (user !== null) {
+      stopWordGame();
+    }
     setUser(user);
   });
 </script>

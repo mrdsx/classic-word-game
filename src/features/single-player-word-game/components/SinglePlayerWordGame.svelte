@@ -29,6 +29,8 @@
   } from "../../../lib/components/ui/native-select";
   import { Skeleton } from "../../../lib/components/ui/skeleton";
 
+  // TODO: refactor
+
   const NEW_GAME_BUTTON_TEXT = "New game";
 
   let maxMistakesSelectRef: HTMLSelectElement | null = $state(null);
