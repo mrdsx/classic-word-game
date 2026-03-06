@@ -1,3 +1,4 @@
+import { WordGameError } from "$features/word-game/exceptions";
 import { dictionaryWordSchema } from "./schemas";
 
 export function validateDictionaryWord(data: unknown): void {
@@ -16,6 +17,6 @@ export function validateDictionaryWord(data: unknown): void {
   }
 
   if (!isNoun) {
-    throw new Error("Word is not noun.");
+    throw new WordGameError("Word is not noun.");
   }
 }

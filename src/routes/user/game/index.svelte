@@ -9,6 +9,7 @@
     MAX_WORD_LENGTH,
     MIN_WORD_LENGTH,
   } from "$features/word-game/constants";
+  import { WordGameError } from "$features/word-game/exceptions";
   import { addWordUseCase } from "$features/word-game/useCases";
   import { normalizeWord, validateWord } from "$features/word-game/utils";
   import {
@@ -138,15 +139,16 @@
       });
       newWord = "";
     } catch (error) {
-      incrementMistakes.mutate({
-        userUID,
-        wordGame: wordGameSnapshot,
-      });
-      if (error instanceof Error) {
-        submitError = error.message;
-        return;
+      submitError =
+        (error as { message: string | undefined })?.message ??
+        "Something went wrong. Please, try again.";
+
+      if (error instanceof WordGameError) {
+        incrementMistakes.mutate({
+          userUID,
+          wordGame: wordGameSnapshot,
+        });
       }
-      throw error;
     }
   }
 

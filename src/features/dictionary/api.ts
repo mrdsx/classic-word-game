@@ -1,10 +1,11 @@
+import { WordGameError } from "$features/word-game/exceptions";
 import { StatusCodes } from "http-status-codes";
 import { DICTIONARY_API_URL } from "./constants";
 
 export async function fetchDictionaryWord(word: string): Promise<unknown> {
   const response = await fetch(`${DICTIONARY_API_URL}/${word}`);
   if (response.status === StatusCodes.NOT_FOUND) {
-    throw new Error("Word does not exist.");
+    throw new WordGameError("Word does not exist.");
   }
   if (response.status === StatusCodes.TOO_MANY_REQUESTS) {
     throw new Error("Too many requests.");

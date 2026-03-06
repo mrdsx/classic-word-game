@@ -1,0 +1,1 @@
+export { WordGameError } from "./wordGameError";

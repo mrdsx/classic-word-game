@@ -4,6 +4,7 @@
     MAX_WORD_LENGTH,
     MIN_WORD_LENGTH,
   } from "$features/word-game/constants";
+  import { WordGameError } from "$features/word-game/exceptions";
   import type { Word } from "$features/word-game/types";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
@@ -18,7 +19,7 @@
 
   let canAddWords: boolean = $state(true);
   let input: HTMLInputElement | null = $state(null);
-  let inputError: string | null = $state(null);
+  let submitError: string | null = $state(null);
 
   const addWordMutation = createMutation(() => ({
     mutationKey: localWordGameQueryKeys.addWord,
@@ -29,28 +30,37 @@
 
   async function handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
-    inputError = null;
+    submitError = null;
     if (input === null || !canAddWords) return;
 
+    const newWord = input.value;
+    if (newWord.length < MIN_WORD_LENGTH) {
+      submitError = "Too short.";
+      return;
+    } else if (newWord.length > MAX_WORD_LENGTH) {
+      submitError = "Too long.";
+      return;
+    }
+
     try {
-      const newWord = input.value;
       await addWordMutation.mutateAsync(newWord);
       input.value = "";
       resetMistakes();
     } catch (error) {
-      if (error instanceof Error) {
-        inputError = error.message;
-        incrementMistakes(handleGameOver);
-        return;
-      }
+      submitError =
+        (error as { message: string | undefined })?.message ??
+        "Something went wrong. Please, try again.";
 
-      throw error;
+      if (error instanceof WordGameError) {
+        incrementMistakes(handleGameOver);
+      }
     }
   }
 
   function handleGameOver(): void {
     const enteredWords = words.get().length;
-    inputError = `Game over. Your result is ${enteredWords} ${declineWord(enteredWords, ["word", "words"])}.`;
+    if (enteredWords === 0) return;
+    submitError = `Game over. Your result is ${enteredWords} ${declineWord(enteredWords, ["word", "words"])}.`;
     resetWords();
   }
 </script>
@@ -61,12 +71,12 @@
       placeholder="Enter the word"
       minlength={MIN_WORD_LENGTH}
       maxlength={MAX_WORD_LENGTH}
-      aria-invalid={inputError !== null}
+      aria-invalid={submitError !== null}
       disabled={!canAddWords}
       bind:ref={input}
     />
-    {#if inputError !== null}
-      <p class="text-destructive text-sm">{inputError}</p>
+    {#if submitError !== null}
+      <p class="text-destructive text-sm">{submitError}</p>
     {/if}
   </div>
   <Button
