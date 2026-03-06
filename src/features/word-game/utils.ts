@@ -1,4 +1,5 @@
 import { isLowercaseOnly } from "$lib/utils";
+import { MAX_WORD_LENGTH, MIN_WORD_LENGTH } from "./constants";
 import { WordGameError } from "./exceptions";
 
 export function normalizeWord(word: string): string {
@@ -11,6 +12,12 @@ export function validateWord(word: string, words: string[]): void {
     throw new Error("yo, wassup?");
   } else if (word === "69") {
     throw new Error("bro -_-");
+  }
+
+  if (word.length < MIN_WORD_LENGTH) {
+    throw new Error("Too short.");
+  } else if (word.length > MAX_WORD_LENGTH) {
+    throw new Error("Too long.");
   }
 
   // assert main rule of word game

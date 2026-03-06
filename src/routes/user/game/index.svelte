@@ -46,7 +46,7 @@
   const words = $derived((wordGame ?? { words: [] }).words as string[]);
   const reversedWords = $derived([...words].reverse());
 
-  const updateWordGame = createMutation(() => ({
+  const updateWordGameMutation = createMutation(() => ({
     mutationKey: wordGameQueryKeys.updateWordGame,
     mutationFn: async ({
       newWord,
@@ -103,10 +103,14 @@
         const wordGameData = doc.data() as SinglePlayerWordGame | undefined;
         if (
           wordGameData !== undefined &&
-          wordGameData.mistakes >= wordGameData.maxMistakes
+          wordGameData.mistakes >= wordGameData.maxMistakes &&
+          wordGameData.words.length > 0
         ) {
           await handleGameOver(wordGameData.words.length, userUID);
         } else {
+          if (wordGameData !== undefined && wordGameData.words.length === 0) {
+            await handleMistakesReset(userUID);
+          }
           wordGame = wordGameData ?? null;
         }
       },
@@ -132,7 +136,7 @@
 
     const wordGameSnapshot = $state.snapshot(wordGame);
     try {
-      await updateWordGame.mutateAsync({
+      await updateWordGameMutation.mutateAsync({
         newWord,
         userUID,
         wordGame: wordGameSnapshot,
@@ -160,6 +164,18 @@
     await setDoc(
       doc(db, "singlePlayerWordGames", userUID),
       { mistakes: 0, words: [] },
+      { merge: true },
+    );
+  }
+
+  async function handleMistakesReset(
+    userUID: string | undefined,
+  ): Promise<void> {
+    if (userUID === undefined) return;
+
+    await setDoc(
+      doc(db, "singlePlayerWordGames", userUID),
+      { mistakes: 0 },
       { merge: true },
     );
   }
@@ -194,9 +210,9 @@
   <Button
     class="w-25"
     type="submit"
-    disabled={wordGame === undefined || updateWordGame.isPending}
+    disabled={wordGame === undefined || updateWordGameMutation.isPending}
   >
-    <LoadingSwap isLoading={updateWordGame.isPending} fallback="Adding">
+    <LoadingSwap isLoading={updateWordGameMutation.isPending} fallback="Adding">
       Add
     </LoadingSwap>
   </Button>

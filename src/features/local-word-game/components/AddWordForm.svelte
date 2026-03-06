@@ -35,16 +35,8 @@
     submitError = null;
     if (input === null || !canAddWords) return;
 
-    const newWord = input.value;
-    if (newWord.length < MIN_WORD_LENGTH) {
-      submitError = "Too short.";
-      return;
-    } else if (newWord.length > MAX_WORD_LENGTH) {
-      submitError = "Too long.";
-      return;
-    }
-
     try {
+      const newWord = input.value;
       await addWordMutation.mutateAsync(newWord);
       input.value = "";
       resetMistakes();
