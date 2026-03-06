@@ -1,6 +1,12 @@
 <script lang="ts">
   import { localWordGameQueryKeys } from "$features/local-word-game/queryKeys";
-  import { addWord, resetWords, words } from "$features/local-word-game/stores";
+  import {
+    addWord,
+    incrementMistakes,
+    resetMistakes,
+    resetWords,
+    words,
+  } from "$features/local-word-game/stores";
   import {
     MAX_WORD_LENGTH,
     MIN_WORD_LENGTH,
@@ -12,10 +18,6 @@
   import { LoadingSwap } from "$lib/components/ui/loading-swap";
   import { declineWord } from "$lib/utils";
   import { createMutation } from "@tanstack/svelte-query";
-  import {
-    incrementMistakes,
-    resetMistakes,
-  } from "../../../store/localWordGame";
 
   let canAddWords: boolean = $state(true);
   let input: HTMLInputElement | null = $state(null);

@@ -1,13 +1,13 @@
 <script lang="ts" module>
   import { AuthArea } from "$features/auth/components";
   import { setUser } from "$features/auth/stores/authState";
+  import { stopWordGame } from "$features/local-word-game/stores";
   import ToggleThemeButton from "$lib/components/ToggleThemeButton.svelte";
   import { Toaster } from "$lib/components/ui/sonner";
   import { auth } from "$lib/firebase";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import { onAuthStateChanged } from "firebase/auth";
   import { Router } from "sv-router";
-  import { stopWordGame } from "./store/localWordGame";
   import { theme } from "./store/theme";
 
   const queryClient = new QueryClient();

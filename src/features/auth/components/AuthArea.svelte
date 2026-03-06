@@ -1,5 +1,6 @@
 <script lang="ts">
   import { authState } from "$features/auth/stores/authState";
+  import { localWordGame } from "$features/local-word-game/stores";
   import { auth } from "$lib/firebase";
   import { navigate } from "$lib/router";
   import { signOut } from "firebase/auth";
@@ -14,7 +15,6 @@
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "../../../lib/components/ui/dropdown-menu";
-  import { localWordGame } from "../../../store/localWordGame";
 
   async function handleLogout(): Promise<void> {
     localWordGame.set({ ...localWordGame.get(), isPlaying: false });

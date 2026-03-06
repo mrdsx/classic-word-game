@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { words } from "$features/local-word-game/stores";
+  import {
+    resetWordGame,
+    stopWordGame,
+    words,
+  } from "$features/local-word-game/stores";
   import {
     AlertDialog,
     AlertDialogAction,
@@ -12,7 +16,6 @@
     AlertDialogTrigger,
   } from "../../../lib/components/ui/alert-dialog";
   import { Button, buttonVariants } from "../../../lib/components/ui/button";
-  import { resetWordGame, stopWordGame } from "../../../store/localWordGame";
 </script>
 
 <div class="space-x-1">
