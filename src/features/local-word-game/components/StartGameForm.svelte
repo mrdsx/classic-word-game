@@ -1,5 +1,6 @@
 <script lang="ts">
   import { MaxMistakesNativeSelect } from "$features/local-word-game/components";
+  import { words } from "$features/local-word-game/stores";
   import {
     AlertDialog,
     AlertDialogAction,
@@ -17,7 +18,6 @@
     startNewWordGame,
     startWordGame,
   } from "../../../store/localWordGame";
-  import { words } from "../../../store/words";
 
   const NEW_GAME_BUTTON_TEXT = "New game";
 

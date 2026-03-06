@@ -1,5 +1,6 @@
 <script lang="ts">
   import { localWordGameQueryKeys } from "$features/local-word-game/queryKeys";
+  import { addWord, resetWords, words } from "$features/local-word-game/stores";
   import {
     MAX_WORD_LENGTH,
     MIN_WORD_LENGTH,
@@ -15,7 +16,6 @@
     incrementMistakes,
     resetMistakes,
   } from "../../../store/localWordGame";
-  import { addWord, resetWords, words } from "../../../store/words";
 
   let canAddWords: boolean = $state(true);
   let input: HTMLInputElement | null = $state(null);

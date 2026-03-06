@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { words } from "$features/local-word-game/stores";
   import { WordsList } from "$features/word-game/components";
-  import { words } from "../../../store/words";
   import LocalWordGameActions from "./LocalWordGameActions.svelte";
   import LocalWordGameInfo from "./LocalWordGameInfo.svelte";
 

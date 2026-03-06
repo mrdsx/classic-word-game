@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { words } from "$features/local-word-game/stores";
   import { localWordGame } from "../../../store/localWordGame";
   import { localWordGamePreferences } from "../../../store/localWordGamePreferences";
-  import { words } from "../../../store/words";
 </script>
 
 {#if $words.length > 0}

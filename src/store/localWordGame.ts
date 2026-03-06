@@ -1,9 +1,9 @@
+import { resetWords } from "$features/local-word-game/stores";
 import { persistentAtom } from "@nanostores/persistent";
 import {
   localWordGamePreferences,
   setCurrentMaxMistakes,
 } from "./localWordGamePreferences";
-import { resetWords } from "./words";
 
 type LocalWordGame = {
   isPlaying: boolean;
