@@ -68,12 +68,12 @@
       {:else if fetchDictionaryWordMutation.isError}
         <p class="text-destructive">Failed to fetch word.</p>
       {:else}
-        <SheetTitle class="mb-2">{capitalizeWord(word)}</SheetTitle>
-        <SheetDescription class="text-foreground max-h-[90vh] overflow-auto">
+        <SheetTitle class="mb-2 text-lg">{capitalizeWord(word)}</SheetTitle>
+        <SheetDescription class="text-foreground max-h-[88vh] overflow-auto">
           <ol class="space-y-2 text-[15px]">
             {#each wordDefinitions as definition, index}
               <li>
-                <span class="font-bold">{index + 1}.</span>
+                <span class="font-semibold">{index + 1}.</span>
                 {definition}
               </li>
             {/each}
