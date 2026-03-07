@@ -5,8 +5,8 @@
   import { Button } from "$lib/components/ui/button";
   import { LoadingSwap } from "$lib/components/ui/loading-swap";
   import { navigate } from "$lib/router";
+  import { CircleCheckIcon } from "@lucide/svelte";
   import { createMutation } from "@tanstack/svelte-query";
-  import { CircleCheckIcon } from "lucide-svelte";
   import { toast } from "svelte-sonner";
 
   let isEmailSent = $state(false);

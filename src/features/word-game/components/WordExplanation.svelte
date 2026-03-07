@@ -1,0 +1,93 @@
+<script lang="ts">
+  import { fetchDictionaryWord } from "$features/dictionary/api";
+  import { dictionaryWordQueryKeys } from "$features/dictionary/queryKeys";
+  import { dictionaryWordSchema } from "$features/dictionary/schemas";
+  import { buttonVariants } from "$lib/components/ui/button";
+  import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+  } from "$lib/components/ui/sheet";
+  import { Spinner } from "$lib/components/ui/spinner";
+  import { capitalizeWord } from "$lib/utils";
+  import { BookTextIcon } from "@lucide/svelte";
+  import { createMutation } from "@tanstack/svelte-query";
+  import type { Word } from "../types";
+  import { normalizeWord } from "../utils";
+
+  type WordExplanationProps = {
+    word: Word;
+  };
+
+  let { word }: WordExplanationProps = $props();
+  let wasOpened: boolean = $state(false);
+  let wordDefinitions: string[] = $state([]);
+
+  const fetchDictionaryWordMutation = createMutation(() => ({
+    mutationKey: dictionaryWordQueryKeys.dictionaryWord,
+    mutationFn: async (word: Word) => {
+      const normalized = normalizeWord(word);
+      const wordData = await fetchDictionaryWord(normalized);
+      const { data: dictionaryWord } =
+        await dictionaryWordSchema.safeParseAsync(wordData);
+
+      return dictionaryWord;
+    },
+  }));
+
+  const dictionaryWord = $derived(fetchDictionaryWordMutation.data);
+
+  $effect(() => {
+    const words = $state.snapshot(dictionaryWord);
+    if (words === undefined) return;
+
+    const result: string[] = [];
+    words.forEach((word) => {
+      word.meanings.forEach((meaning) => {
+        meaning.definitions.forEach((obj) => {
+          if (meaning.partOfSpeech === "noun") {
+            result.push(obj.definition);
+          }
+        });
+      });
+    });
+    wordDefinitions = structuredClone(result);
+  });
+
+  function handleSheetOpenChange(): void {
+    if (!wasOpened) {
+      fetchDictionaryWordMutation.mutate(word);
+    }
+    wasOpened = true;
+  }
+</script>
+
+<Sheet onOpenChange={handleSheetOpenChange}>
+  <SheetTrigger class={buttonVariants({ size: "icon-sm", variant: "ghost" })}>
+    <BookTextIcon />
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      {#if fetchDictionaryWordMutation.isPending}
+        <Spinner />
+      {:else if fetchDictionaryWordMutation.isError}
+        <p class="text-destructive">Failed to fetch word.</p>
+      {:else}
+        <SheetTitle class="mb-2">{capitalizeWord(word)}</SheetTitle>
+        <SheetDescription class="text-foreground max-h-[90vh] overflow-auto">
+          <ol class="space-y-2 text-[15px]">
+            {#each wordDefinitions as definition, index}
+              <li>
+                <span class="font-bold">{index + 1}.</span>
+                {definition}
+              </li>
+            {/each}
+          </ol>
+        </SheetDescription>
+      {/if}
+    </SheetHeader>
+  </SheetContent>
+</Sheet>

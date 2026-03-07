@@ -6,6 +6,7 @@ export const dictionaryWordSchema = z.array(
     meanings: z.array(
       z.object({
         partOfSpeech: z.string(),
+        definitions: z.array(z.object({ definition: z.string() })),
       }),
     ),
   }),

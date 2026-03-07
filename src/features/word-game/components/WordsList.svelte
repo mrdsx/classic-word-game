@@ -6,6 +6,7 @@
     EmptyTitle,
   } from "$lib/components/ui/empty";
   import type { Word } from "../types";
+  import WordExplanation from "./WordExplanation.svelte";
 
   type WordsListProps = {
     words: Word[];
@@ -19,9 +20,10 @@
   <ul class="max-h-80 w-full space-y-2 overflow-auto">
     {#each words as word (word)}
       <li
-        class="dark:text-background rounded-md bg-blue-100 px-2 py-1 break-all dark:bg-blue-400/80"
+        class="dark:text-background flex items-center justify-between rounded-md bg-blue-100 p-1 pl-2 break-all dark:bg-blue-400/80"
       >
         {word}
+        <WordExplanation {word} />
       </li>
     {/each}
   </ul>

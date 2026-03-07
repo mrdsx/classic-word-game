@@ -1,6 +1,6 @@
 <script>
   import { Button } from "$lib/components/ui/button";
-  import { MoonIcon, SunIcon } from "lucide-svelte";
+  import { MoonIcon, SunIcon } from "@lucide/svelte";
   import { theme } from "../../store/theme";
 </script>
 

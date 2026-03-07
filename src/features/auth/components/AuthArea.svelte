@@ -13,8 +13,8 @@
   } from "$lib/components/ui/dropdown-menu";
   import { auth } from "$lib/firebase";
   import { navigate } from "$lib/router";
+  import { HouseIcon, LogOutIcon, UserIcon } from "@lucide/svelte";
   import { signOut } from "firebase/auth";
-  import { HouseIcon, LogOutIcon, UserIcon } from "lucide-svelte";
 
   async function handleLogout(): Promise<void> {
     localWordGame.set({ ...localWordGame.get(), isPlaying: false });
